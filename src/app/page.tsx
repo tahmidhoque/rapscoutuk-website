@@ -1,11 +1,9 @@
-import { RapScoutNewsletterHub } from './components/RapScoutNewsletterHub'
+import { RapScoutNewsletterHub } from '@/components/RapScoutNewsletterHub'
 
-function App() {
+export default function Home() {
   return (
     <div className="flex min-h-dvh flex-col bg-canvas text-ink">
       <RapScoutNewsletterHub />
     </div>
   )
 }
-
-export default App

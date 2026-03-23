@@ -1,31 +1,14 @@
+'use client'
+
 import * as React from 'react'
 import { useState } from 'react'
+import Image from 'next/image'
 
 import { Input } from '@/components/ui/input'
 import { SocialStrip } from '@/components/SocialStrip'
 import { SOCIAL_STRIP_VARIANT } from '@/config/socialStripVariant'
+import { isValidEmail } from '@/lib/emailValidation'
 import { cn } from '@/lib/utils'
-import {
-  stripMailchimpHtml,
-  subscribeMailchimpJsonp,
-} from '@/lib/mailchimpSubscribe'
-
-const MAILCHIMP_DC = import.meta.env.VITE_MAILCHIMP_DC?.trim()
-const MAILCHIMP_U = import.meta.env.VITE_MAILCHIMP_U?.trim()
-const MAILCHIMP_AUDIENCE_ID = import.meta.env.VITE_MAILCHIMP_AUDIENCE_ID?.trim()
-const MAILCHIMP_F_ID = import.meta.env.VITE_MAILCHIMP_F_ID?.trim()
-
-const mailchimpConfigured = Boolean(
-  MAILCHIMP_DC && MAILCHIMP_U && MAILCHIMP_AUDIENCE_ID,
-)
-
-const GENERIC_ENDPOINT = import.meta.env.VITE_NEWSLETTER_ENDPOINT?.trim()
-
-const signupConfigured = mailchimpConfigured || Boolean(GENERIC_ENDPOINT)
-
-function isValidEmail(value: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())
-}
 
 export function RapScoutNewsletterHub() {
   const [email, setEmail] = useState('')
@@ -37,44 +20,46 @@ export function RapScoutNewsletterHub() {
 
   const trimmed = email.trim()
   const showError = touched && trimmed.length > 0 && !isValidEmail(trimmed)
-  const canSubmit =
-    signupConfigured && isValidEmail(trimmed) && status !== 'loading'
+  const canSubmit = isValidEmail(trimmed) && status !== 'loading'
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setTouched(true)
-    if (!signupConfigured) return
     if (!isValidEmail(trimmed)) return
 
     setStatus('loading')
     setErrorMessage('')
     try {
-      if (mailchimpConfigured) {
-        const data = await subscribeMailchimpJsonp(trimmed, {
-          dc: MAILCHIMP_DC!,
-          u: MAILCHIMP_U!,
-          audienceId: MAILCHIMP_AUDIENCE_ID!,
-          fId: MAILCHIMP_F_ID || undefined,
-        })
-        if (data.result !== 'success') {
-          setStatus('error')
-          setErrorMessage(
-            stripMailchimpHtml(data.msg) ||
-              'Could not add this email. Please try again.',
-          )
-          return
-        }
-      } else {
-        const res = await fetch(GENERIC_ENDPOINT!, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: trimmed }),
-        })
-        if (!res.ok) throw new Error(`Request failed: ${res.status}`)
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: trimmed }),
+      })
+
+      if (res.ok) {
+        setStatus('success')
+        setEmail('')
+        setTouched(false)
+        return
       }
-      setStatus('success')
-      setEmail('')
-      setTouched(false)
+
+      let message = 'Something went wrong. Try again in a moment.'
+      try {
+        const data: unknown = await res.json()
+        if (
+          data &&
+          typeof data === 'object' &&
+          'error' in data &&
+          typeof (data as { error: unknown }).error === 'string' &&
+          (data as { error: string }).error.trim()
+        ) {
+          message = (data as { error: string }).error.trim()
+        }
+      } catch {
+        /* use default message */
+      }
+      setStatus('error')
+      setErrorMessage(message)
     } catch {
       setStatus('error')
       setErrorMessage('Something went wrong. Try again in a moment.')
@@ -87,14 +72,13 @@ export function RapScoutNewsletterHub() {
       aria-label="RapScout mailing list"
     >
       <div className="flex w-full max-w-md flex-col items-center gap-10">
-        <img
+        <Image
           src="/rapscout-logo.png"
           alt="RapScout"
           width={1024}
           height={1024}
           className="h-auto w-[min(100%,220px)] object-contain md:w-[min(100%,280px)]"
-          decoding="async"
-          fetchPriority="high"
+          priority
         />
 
         <SocialStrip variant={SOCIAL_STRIP_VARIANT} />
@@ -105,12 +89,6 @@ export function RapScoutNewsletterHub() {
             className="w-full space-y-4"
             aria-busy={status === 'loading'}
           >
-            {!signupConfigured ? (
-              <p className="sr-only">
-                Newsletter signup is not configured. Use the social links above.
-              </p>
-            ) : null}
-
             <div className="flex flex-col gap-4 sm:flex-row sm:items-stretch">
               <div className="min-w-0 flex-1">
                 <label htmlFor="hub-email" className="sr-only">
@@ -128,7 +106,7 @@ export function RapScoutNewsletterHub() {
                     if (status === 'error') setStatus('idle')
                   }}
                   onBlur={() => setTouched(true)}
-                  disabled={!signupConfigured || status === 'loading'}
+                  disabled={status === 'loading'}
                   aria-invalid={showError}
                   aria-describedby={showError ? 'hub-email-err' : undefined}
                 />
