@@ -8,5 +8,6 @@ export type SocialStripVariant =
   | 'dockedTray'
   | 'outline'
   | 'signalRing'
+  | 'minimal'
 
-export const SOCIAL_STRIP_VARIANT: SocialStripVariant = 'linktree'
+export const SOCIAL_STRIP_VARIANT: SocialStripVariant = 'minimal'

@@ -168,6 +168,34 @@ export function SocialStrip({
     )
   }
 
+  if (variant === 'minimal') {
+    return (
+      <nav
+        className={cn(
+          'flex flex-wrap items-center justify-center gap-4',
+          className,
+        )}
+        aria-label="RapScout on social media"
+      >
+        <ul className="flex flex-wrap items-center justify-center gap-4">
+          {row.map(({ href, label, Icon }) => (
+            <li key={href}>
+              <a
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={label}
+                className="focus-signal flex h-11 w-11 items-center justify-center rounded-lg border border-ink/20 text-dim hover:text-ink"
+              >
+                <Icon className="h-5 w-5" />
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    )
+  }
+
   if (variant === 'outline') {
     return (
       <nav
