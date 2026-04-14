@@ -1,12 +1,9 @@
 'use client'
 
 import * as React from 'react'
-import { useState } from 'react'
-import Image from 'next/image'
+import { useEffect, useRef, useState } from 'react'
 
 import { Input } from '@/components/ui/input'
-import { SocialStrip } from '@/components/SocialStrip'
-import { SOCIAL_STRIP_VARIANT } from '@/config/socialStripVariant'
 import { isValidEmail } from '@/lib/emailValidation'
 import { cn } from '@/lib/utils'
 
@@ -17,6 +14,25 @@ export function RapScoutNewsletterHub() {
     'idle',
   )
   const [errorMessage, setErrorMessage] = useState('')
+
+  const ref = useRef<HTMLElement>(null)
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true)
+          observer.disconnect()
+        }
+      },
+      { threshold: 0.2 },
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
 
   const trimmed = email.trim()
   const showError = touched && trimmed.length > 0 && !isValidEmail(trimmed)
@@ -68,20 +84,25 @@ export function RapScoutNewsletterHub() {
 
   return (
     <section
-      className="flex flex-1 flex-col items-center justify-center px-5 py-16"
+      ref={ref}
+      className="px-5 py-24 sm:py-32"
       aria-label="RapScout mailing list"
     >
-      <div className="flex w-full max-w-md flex-col items-center gap-10">
-        <Image
-          src="/rapscout-logo.png"
-          alt="RapScout"
-          width={1024}
-          height={1024}
-          className="h-auto w-[min(100%,220px)] object-contain md:w-[min(100%,280px)]"
-          priority
-        />
+      <div
+        className={`mx-auto flex w-full max-w-md flex-col items-center gap-8 text-center transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          visible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+        }`}
+      >
+        {/* Section label */}
+        <p className="font-display text-[11px] font-bold tracking-[0.3em] text-signal uppercase">
+          Newsletter
+        </p>
 
-        <SocialStrip variant={SOCIAL_STRIP_VARIANT} />
+        <h2 className="font-display text-3xl font-black leading-tight tracking-tight text-ink sm:text-4xl">
+          Stay ahead
+          <br />
+          of the scene.
+        </h2>
 
         {status !== 'success' ? (
           <form

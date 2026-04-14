@@ -19,11 +19,81 @@ const ibmPlexSans = IBM_Plex_Sans({
   display: 'swap',
 })
 
+const SITE_URL = 'https://www.rapscout.co.uk'
+const OG_IMAGE = `${SITE_URL}/rapscout-logo.png`
+
 export const metadata: Metadata = {
-  title: 'RapScout — UK rap talent',
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: 'RapScout — UK Rap Talent',
+    template: '%s | RapScout',
+  },
   description:
-    'RapScout finds new talent across the UK rap scene. Follow for scouts, sessions, and the artists you need on your radar.',
+    'RapScout discovers and champions emerging talent across the UK rap scene. Scouts, studio sessions, and the artists you need on your radar before anyone else.',
+  keywords: [
+    'UK rap',
+    'UK hip hop',
+    'rap talent scouting',
+    'emerging UK artists',
+    'rap discovery',
+    'underground rap UK',
+    'new UK rappers',
+    'rap sessions',
+    'UK music',
+  ],
   icons: [{ rel: 'icon', url: '/rapscout-logo.png', type: 'image/png' }],
+  openGraph: {
+    type: 'website',
+    url: SITE_URL,
+    siteName: 'RapScout',
+    locale: 'en_GB',
+    title: 'RapScout — UK Rap Talent',
+    description:
+      'RapScout discovers and champions emerging talent across the UK rap scene. Scouts, studio sessions, and the artists you need on your radar before anyone else.',
+    images: [
+      {
+        url: OG_IMAGE,
+        width: 1024,
+        height: 1024,
+        alt: 'RapScout',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'RapScout — UK Rap Talent',
+    description:
+      'RapScout discovers and champions emerging talent across the UK rap scene.',
+    images: [OG_IMAGE],
+  },
+  alternates: {
+    canonical: SITE_URL,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+}
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'RapScout',
+  url: SITE_URL,
+  logo: OG_IMAGE,
+  description:
+    'RapScout discovers and champions emerging talent across the UK rap scene.',
+  sameAs: [
+    'https://www.youtube.com/@rapscouts',
+    'https://www.instagram.com/rapscouts',
+    'https://www.tiktok.com/@rapscoutuk',
+  ],
 }
 
 export default function RootLayout({
@@ -33,7 +103,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en-GB" className={`${chivo.variable} ${ibmPlexSans.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </body>
     </html>
   )
 }
