@@ -51,6 +51,7 @@ export function SubmissionsSection() {
   return (
     <section
       ref={ref}
+      id="submissions"
       className={sectionShellFollowClass}
       aria-label="Music submissions"
     >

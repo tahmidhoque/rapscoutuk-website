@@ -54,7 +54,7 @@ export function AboutSection() {
     <section
       ref={ref}
       id="about"
-      className={`${sectionShellClass} !pb-8 sm:!pb-12`}
+      className={`${sectionShellClass} !pb-6 sm:!pb-8`}
       aria-labelledby="about-heading"
     >
       <div className="mx-auto max-w-5xl">
