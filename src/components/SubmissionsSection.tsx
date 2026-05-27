@@ -91,8 +91,8 @@ export function SubmissionsSection() {
           style={{ transitionDelay: '200ms' }}
         >
           <p className="text-base leading-relaxed text-dim sm:text-lg">
-            I&apos;m always on the lookout for exceptional new talent, and over the years
-            some of the best music I&apos;ve discovered has come directly from artists
+            We&apos;re always on the lookout for exceptional new talent, and over the years
+            some of the best music we&apos;ve discovered has come directly from artists
             themselves.
           </p>
           <p className="text-base leading-relaxed text-dim sm:text-lg">
