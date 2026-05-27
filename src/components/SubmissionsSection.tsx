@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, useState } from 'react'
 
-const SUBMISSION_EMAIL = 'demo@rapscout.co.uk'
+import { SOCIAL_LINKS } from '@/config/links'
+
+const INSTAGRAM_HANDLE = `@${new URL(SOCIAL_LINKS.instagram).pathname.replace(/^\//, '').replace(/\/$/, '')}`
 
 const guidelines = [
   {
@@ -87,8 +89,8 @@ export function SubmissionsSection() {
             themselves.
           </p>
           <p className="text-base leading-relaxed text-dim sm:text-lg">
-            If you&apos;d like to be considered, please submit your music using the
-            details below.
+            If you&apos;d like to be considered, reach out on Instagram with your links
+            and we&apos;ll take a look.
           </p>
         </div>
 
@@ -120,10 +122,13 @@ export function SubmissionsSection() {
           style={{ transitionDelay: '340ms' }}
         >
           <a
-            href={`mailto:${SUBMISSION_EMAIL}`}
+            href={SOCIAL_LINKS.instagram}
+            target="_blank"
+            rel="noopener noreferrer"
             className="focus-signal inline-flex items-center gap-2 font-display text-sm font-bold tracking-wide text-signal uppercase underline-offset-4 transition-opacity duration-200 hover:opacity-70"
           >
-            {SUBMISSION_EMAIL}
+            {INSTAGRAM_HANDLE}
+            <span className="sr-only"> (opens in a new tab)</span>
             <svg
               viewBox="0 0 16 16"
               fill="none"
@@ -140,8 +145,8 @@ export function SubmissionsSection() {
             </svg>
           </a>
           <p className="mt-4 text-xs text-dim">
-            Due to the volume of submissions, not all entries will receive a response
-            — but every submission is reviewed and appreciated.
+            Send a DM with your best links. Due to volume, not every message gets a
+            reply — but everything is reviewed and appreciated.
           </p>
         </div>
       </div>

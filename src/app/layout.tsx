@@ -29,17 +29,22 @@ export const metadata: Metadata = {
     template: '%s | RapScout',
   },
   description:
-    'RapScout discovers and champions emerging talent across the UK rap scene. Scouts, studio sessions, and the artists you need on your radar before anyone else.',
+    'Rap Scout discovers and elevates emerging rap talent across the UK and beyond — from Manchester and Birmingham to Wales, Liverpool, and Nottingham, with a global scope spanning Ireland, France, and the United States.',
   keywords: [
     'UK rap',
     'UK hip hop',
+    'emerging rap talent',
     'rap talent scouting',
+    'A&R UK rap',
+    'Manchester rap',
+    'Birmingham rap',
+    'Midlands rap',
     'emerging UK artists',
     'rap discovery',
     'underground rap UK',
     'new UK rappers',
-    'rap sessions',
     'UK music',
+    'global rap talent',
   ],
   icons: [{ rel: 'icon', url: '/rapscout-logo.png', type: 'image/png' }],
   openGraph: {
@@ -49,7 +54,7 @@ export const metadata: Metadata = {
     locale: 'en_GB',
     title: 'RapScout — UK Rap Talent',
     description:
-      'RapScout discovers and champions emerging talent across the UK rap scene. Scouts, studio sessions, and the artists you need on your radar before anyone else.',
+      'Rap Scout discovers and elevates emerging rap talent across the UK and beyond — scouting artists early with instinct, taste, and long-term vision.',
     images: [
       {
         url: OG_IMAGE,
@@ -63,7 +68,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'RapScout — UK Rap Talent',
     description:
-      'RapScout discovers and champions emerging talent across the UK rap scene.',
+      'Rap Scout discovers and elevates emerging rap talent across the UK and beyond — scouting artists early with instinct, taste, and long-term vision.',
     images: [OG_IMAGE],
   },
   alternates: {
@@ -88,7 +93,7 @@ const jsonLd = {
   url: SITE_URL,
   logo: OG_IMAGE,
   description:
-    'RapScout discovers and champions emerging talent across the UK rap scene.',
+    'Rap Scout is a platform dedicated to discovering and elevating emerging rap talent across the UK and beyond.',
   sameAs: [
     'https://www.youtube.com/@rapscouts',
     'https://www.instagram.com/rapscouts',
@@ -103,6 +108,22 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en-GB" className={`${chivo.variable} ${ibmPlexSans.variable}`}>
+      <head>
+        <link
+          rel="preload"
+          as="image"
+          href="/hero/portrait-poster.avif"
+          type="image/avif"
+          media="(max-width: 767px)"
+        />
+        <link
+          rel="preload"
+          as="image"
+          href="/hero/landscape-poster.avif"
+          type="image/avif"
+          media="(min-width: 768px)"
+        />
+      </head>
       <body>
         {children}
         <script

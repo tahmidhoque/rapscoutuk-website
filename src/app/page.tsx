@@ -3,6 +3,7 @@ import { AboutSection } from '@/components/AboutSection'
 import { RapScoutNewsletterHub } from '@/components/RapScoutNewsletterHub'
 import { SubmissionsSection } from '@/components/SubmissionsSection'
 import { Footer } from '@/components/Footer'
+import { siteFeatures } from '@/config/siteFeatures'
 
 export default function Home() {
   return (
@@ -15,9 +16,12 @@ export default function Home() {
 
         <AboutSection />
 
-        <div className="h-px w-full bg-ink/10" aria-hidden />
-
-        <RapScoutNewsletterHub />
+        {siteFeatures.newsletter ? (
+          <>
+            <div className="h-px w-full bg-ink/10" aria-hidden />
+            <RapScoutNewsletterHub />
+          </>
+        ) : null}
 
         <div className="h-px w-full bg-ink/10" aria-hidden />
 
