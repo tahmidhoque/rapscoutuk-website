@@ -3,8 +3,10 @@
 import { useEffect, useRef, useState } from 'react'
 
 import { SectionHeader, sectionShellFollowClass } from '@/components/SectionHeader'
-import { transmissionCodes } from '@/config/transmission'
 import { SOCIAL_LINKS } from '@/config/links'
+import { siteFeatures } from '@/config/siteFeatures'
+import { transmissionCodes } from '@/config/transmission'
+import { cn } from '@/lib/utils'
 
 const INSTAGRAM_HANDLE = `@${new URL(SOCIAL_LINKS.instagram).pathname.replace(/^\//, '').replace(/\/$/, '')}`
 
@@ -52,10 +54,21 @@ export function SubmissionsSection() {
     <section
       ref={ref}
       id="submissions"
-      className={sectionShellFollowClass}
+      className={cn(
+        sectionShellFollowClass,
+        siteFeatures.newsletter && '!pt-0',
+      )}
       aria-label="Music submissions"
     >
-      <div className="mx-auto max-w-2xl">
+      <div
+        className={cn(
+          'mx-auto',
+          siteFeatures.newsletter
+            ? 'max-w-5xl border-t border-ink/10 pt-10 sm:pt-14'
+            : 'max-w-2xl',
+        )}
+      >
+        <div className={siteFeatures.newsletter ? 'max-w-2xl' : undefined}>
         <SectionHeader
           label="Submissions"
           txCode={transmissionCodes.submissions}
@@ -142,6 +155,7 @@ export function SubmissionsSection() {
             Send a DM with your best links. Due to volume, not every message gets a
             reply — but everything is reviewed and appreciated.
           </p>
+        </div>
         </div>
       </div>
     </section>

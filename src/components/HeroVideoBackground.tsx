@@ -4,6 +4,8 @@ import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from '
 
 import { heroMediaQueries, heroVideo } from '@/config/heroVideo'
 
+type HeroVariant = keyof typeof heroVideo
+
 function subscribeReducedMotion(onStoreChange: () => void) {
   const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
   mq.addEventListener('change', onStoreChange)
@@ -32,31 +34,6 @@ function getSaveData() {
   return Boolean(connection?.saveData)
 }
 
-function subscribePortrait(onStoreChange: () => void) {
-  const mq = window.matchMedia(heroMediaQueries.portrait)
-  mq.addEventListener('change', onStoreChange)
-  return () => mq.removeEventListener('change', onStoreChange)
-}
-
-function getPortrait() {
-  return window.matchMedia(heroMediaQueries.portrait).matches
-}
-
-let webmSupported: boolean | null = null
-
-function canPlayWebm(): boolean {
-  if (webmSupported !== null) return webmSupported
-  if (typeof document === 'undefined') return false
-  const probe = document.createElement('video')
-  webmSupported = Boolean(probe.canPlayType('video/webm; codecs="vp9"'))
-  return webmSupported
-}
-
-function pickHeroSrc(portrait: boolean): string {
-  const variant = portrait ? heroVideo.portrait : heroVideo.landscape
-  return canPlayWebm() ? variant.webm : variant.mp4
-}
-
 /** iOS Safari requires muted + inline playback set before play(). */
 function primeVideoForAutoplay(video: HTMLVideoElement) {
   video.muted = true
@@ -68,9 +45,10 @@ function primeVideoForAutoplay(video: HTMLVideoElement) {
   video.controls = false
 }
 
-function HeroVideoPlayer({ src }: { src: string }) {
+function HeroVideoPlayer({ variant }: { variant: HeroVariant }) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [videoReady, setVideoReady] = useState(false)
+  const { webm, mp4 } = heroVideo[variant]
 
   const tryPlay = useCallback(() => {
     const video = videoRef.current
@@ -128,12 +106,11 @@ function HeroVideoPlayer({ src }: { src: string }) {
       document.removeEventListener('touchstart', unlock, { capture: true })
       document.removeEventListener('click', unlock, { capture: true })
     }
-  }, [src, tryPlay])
+  }, [variant, tryPlay])
 
   return (
     <video
       ref={videoRef}
-      src={src}
       className={`hero-video-fade absolute inset-0 h-full w-full object-cover ${videoReady ? 'hero-video-fade--ready' : ''}`}
       autoPlay
       muted
@@ -144,16 +121,17 @@ function HeroVideoPlayer({ src }: { src: string }) {
       disablePictureInPicture
       disableRemotePlayback
       onCanPlay={onCanPlay}
-    />
+    >
+      <source src={webm} type='video/webm; codecs="vp9"' />
+      <source src={mp4} type="video/mp4" />
+    </video>
   )
 }
 
 export function HeroVideoBackground() {
   const reducedMotion = useSyncExternalStore(subscribeReducedMotion, getReducedMotion, () => false)
   const saveData = useSyncExternalStore(subscribeSaveData, getSaveData, () => false)
-  const portrait = useSyncExternalStore(subscribePortrait, getPortrait, () => true)
   const shouldPlayVideo = !reducedMotion && !saveData
-  const heroSrc = pickHeroSrc(portrait)
 
   return (
     <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden>
@@ -188,7 +166,16 @@ export function HeroVideoBackground() {
         />
       </picture>
 
-      {shouldPlayVideo ? <HeroVideoPlayer key={heroSrc} src={heroSrc} /> : null}
+      {shouldPlayVideo ? (
+        <>
+          <div className="absolute inset-0 md:hidden">
+            <HeroVideoPlayer variant="portrait" />
+          </div>
+          <div className="absolute inset-0 hidden md:block">
+            <HeroVideoPlayer variant="landscape" />
+          </div>
+        </>
+      ) : null}
 
       <div className="hero-vignette absolute inset-0" />
       {/* Left-side gradient — desktop only, for side rail + title legibility */}

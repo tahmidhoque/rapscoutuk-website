@@ -18,8 +18,6 @@ export default function Home() {
 
         {siteFeatures.newsletter ? <RapScoutNewsletterHub /> : null}
 
-        <div className="h-px w-full bg-ink/10" aria-hidden />
-
         <SubmissionsSection />
       </main>
 

@@ -110,7 +110,7 @@ export function RapScoutNewsletterHub() {
     <section
       ref={ref}
       id="newsletter"
-      className={`${sectionShellFollowClass} !pt-0`}
+      className={`${sectionShellFollowClass} !pt-0 !pb-6 sm:!pb-8`}
       aria-labelledby="newsletter-heading"
     >
       <div className="mx-auto max-w-5xl border-t border-ink/10 pt-10 sm:pt-14">
@@ -121,7 +121,7 @@ export function RapScoutNewsletterHub() {
           style={{ transitionDelay: '0ms' }}
         />
 
-        <div className="grid gap-10 lg:grid-cols-[2fr_3fr] lg:gap-20">
+        <div className="grid gap-0 lg:grid-cols-[2fr_3fr] lg:gap-20">
           {/* Left — display heading + value props */}
           <div>
             <h2
@@ -150,7 +150,7 @@ export function RapScoutNewsletterHub() {
               {perks.map(({ label, detail }, i) => (
                 <li
                   key={label}
-                  className="flex gap-5 border-t border-ink/10 py-5 last:border-b"
+                  className="flex gap-5 border-t border-ink/10 py-5 last:border-b-0 lg:last:border-b"
                 >
                   <span
                     className="mt-0.5 font-display text-xs font-bold tabular-nums text-signal"
@@ -173,7 +173,7 @@ export function RapScoutNewsletterHub() {
 
           {/* Right — signup panel */}
           <div
-            className={`border-t border-ink/10 pt-8 lg:border-t-0 lg:border-l lg:border-ink/10 lg:pl-12 lg:pt-2 ${base} ${visible ? shown : hidden}`}
+            className={`border-t border-ink/10 pt-6 lg:border-t-0 lg:border-l lg:border-ink/10 lg:pl-12 lg:pt-2 ${base} ${visible ? shown : hidden}`}
             style={{ transitionDelay: '260ms' }}
           >
             {status !== 'success' ? (
@@ -262,19 +262,6 @@ export function RapScoutNewsletterHub() {
                 </button>
               </div>
             )}
-
-            <p
-              className={`mt-10 border-t border-ink/10 pt-6 text-sm text-dim ${base} ${visible ? shown : hidden}`}
-              style={{ transitionDelay: '320ms' }}
-            >
-              Submitting music?{' '}
-              <a
-                href="#submissions"
-                className="focus-signal font-display font-bold tracking-wide text-signal uppercase underline-offset-4 transition-opacity duration-200 hover:opacity-70"
-              >
-                Go to submissions
-              </a>
-            </p>
           </div>
         </div>
       </div>
