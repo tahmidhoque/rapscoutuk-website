@@ -32,42 +32,128 @@ function getSaveData() {
   return Boolean(connection?.saveData)
 }
 
-function scheduleIdle(callback: () => void): () => void {
-  if (typeof window.requestIdleCallback === 'function') {
-    const id = window.requestIdleCallback(callback, { timeout: 2000 })
-    return () => window.cancelIdleCallback(id)
-  }
-  const id = window.setTimeout(callback, 400)
-  return () => window.clearTimeout(id)
+function subscribePortrait(onStoreChange: () => void) {
+  const mq = window.matchMedia(heroMediaQueries.portrait)
+  mq.addEventListener('change', onStoreChange)
+  return () => mq.removeEventListener('change', onStoreChange)
+}
+
+function getPortrait() {
+  return window.matchMedia(heroMediaQueries.portrait).matches
+}
+
+let webmSupported: boolean | null = null
+
+function canPlayWebm(): boolean {
+  if (webmSupported !== null) return webmSupported
+  if (typeof document === 'undefined') return false
+  const probe = document.createElement('video')
+  webmSupported = Boolean(probe.canPlayType('video/webm; codecs="vp9"'))
+  return webmSupported
+}
+
+function pickHeroSrc(portrait: boolean): string {
+  const variant = portrait ? heroVideo.portrait : heroVideo.landscape
+  return canPlayWebm() ? variant.webm : variant.mp4
+}
+
+/** iOS Safari requires muted + inline playback set before play(). */
+function primeVideoForAutoplay(video: HTMLVideoElement) {
+  video.muted = true
+  video.defaultMuted = true
+  video.setAttribute('muted', '')
+  video.setAttribute('playsinline', '')
+  video.setAttribute('webkit-playsinline', '')
+  video.playsInline = true
+  video.controls = false
+}
+
+function HeroVideoPlayer({ src }: { src: string }) {
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const [videoReady, setVideoReady] = useState(false)
+
+  const tryPlay = useCallback(() => {
+    const video = videoRef.current
+    if (!video) return
+
+    primeVideoForAutoplay(video)
+
+    const playPromise = video.play()
+    if (playPromise === undefined) return
+
+    void playPromise
+      .then(() => {
+        setVideoReady(true)
+      })
+      .catch(() => {
+        /* Autoplay blocked — poster remains visible until unlock gesture */
+      })
+  }, [])
+
+  const onCanPlay = useCallback(() => {
+    tryPlay()
+  }, [tryPlay])
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+
+    primeVideoForAutoplay(video)
+    video.load()
+    tryPlay()
+
+    const retryEvents = ['loadeddata', 'canplay', 'canplaythrough'] as const
+    for (const event of retryEvents) {
+      video.addEventListener(event, tryPlay)
+    }
+
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') tryPlay()
+    }
+    document.addEventListener('visibilitychange', onVisible)
+    window.addEventListener('pageshow', tryPlay)
+
+    const unlock = () => {
+      tryPlay()
+    }
+    document.addEventListener('touchstart', unlock, { once: true, passive: true, capture: true })
+    document.addEventListener('click', unlock, { once: true, capture: true })
+
+    return () => {
+      for (const event of retryEvents) {
+        video.removeEventListener(event, tryPlay)
+      }
+      document.removeEventListener('visibilitychange', onVisible)
+      window.removeEventListener('pageshow', tryPlay)
+      document.removeEventListener('touchstart', unlock, { capture: true })
+      document.removeEventListener('click', unlock, { capture: true })
+    }
+  }, [src, tryPlay])
+
+  return (
+    <video
+      ref={videoRef}
+      src={src}
+      className={`hero-video-fade absolute inset-0 h-full w-full object-cover ${videoReady ? 'hero-video-fade--ready' : ''}`}
+      autoPlay
+      muted
+      loop
+      playsInline
+      preload="auto"
+      controls={false}
+      disablePictureInPicture
+      disableRemotePlayback
+      onCanPlay={onCanPlay}
+    />
+  )
 }
 
 export function HeroVideoBackground() {
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const [videoReady, setVideoReady] = useState(false)
   const reducedMotion = useSyncExternalStore(subscribeReducedMotion, getReducedMotion, () => false)
   const saveData = useSyncExternalStore(subscribeSaveData, getSaveData, () => false)
+  const portrait = useSyncExternalStore(subscribePortrait, getPortrait, () => true)
   const shouldPlayVideo = !reducedMotion && !saveData
-
-  const onCanPlay = useCallback(() => {
-    setVideoReady(true)
-    const video = videoRef.current
-    if (!video) return
-    void video.play().catch(() => {
-      /* Autoplay blocked — poster remains visible */
-    })
-  }, [])
-
-  useEffect(() => {
-    if (!shouldPlayVideo) return
-
-    const cancelIdle = scheduleIdle(() => {
-      const video = videoRef.current
-      if (!video) return
-      video.load()
-    })
-
-    return cancelIdle
-  }, [shouldPlayVideo])
+  const heroSrc = pickHeroSrc(portrait)
 
   return (
     <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden>
@@ -102,39 +188,7 @@ export function HeroVideoBackground() {
         />
       </picture>
 
-      {shouldPlayVideo ? (
-        <video
-          ref={videoRef}
-          className={`hero-video-fade absolute inset-0 h-full w-full object-cover ${videoReady ? 'hero-video-fade--ready' : ''}`}
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="none"
-          onCanPlay={onCanPlay}
-        >
-          <source
-            src={heroVideo.portrait.webm}
-            type="video/webm"
-            media={heroMediaQueries.portrait}
-          />
-          <source
-            src={heroVideo.portrait.mp4}
-            type="video/mp4"
-            media={heroMediaQueries.portrait}
-          />
-          <source
-            src={heroVideo.landscape.webm}
-            type="video/webm"
-            media={heroMediaQueries.landscape}
-          />
-          <source
-            src={heroVideo.landscape.mp4}
-            type="video/mp4"
-            media={heroMediaQueries.landscape}
-          />
-        </video>
-      ) : null}
+      {shouldPlayVideo ? <HeroVideoPlayer key={heroSrc} src={heroSrc} /> : null}
 
       <div className="hero-vignette absolute inset-0" />
       {/* Left-side gradient — desktop only, for side rail + title legibility */}
