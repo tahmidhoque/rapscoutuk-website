@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Encode RapScout hero videos for web delivery.
 # Requires: ffmpeg (brew install ffmpeg)
-# Source files: public/portrait-hero.mov, public/landscape-hero.mov
+# Source files: public/portrait-hero.mov (portrait/mobile), public/landscape-hero.mov (desktop)
+# Re-encode portrait only: PORTRAIT_SRC=path/to/source.mov bash scripts/encode-hero.sh
 
 set -euo pipefail
 
