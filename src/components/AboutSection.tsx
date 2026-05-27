@@ -2,6 +2,9 @@
 
 import { useEffect, useRef, useState } from 'react'
 
+import { SectionHeader, sectionShellClass } from '@/components/SectionHeader'
+import { transmissionCodes } from '@/config/transmission'
+
 const UK_REGIONS = [
   'Midlands',
   'North',
@@ -51,30 +54,15 @@ export function AboutSection() {
     <section
       ref={ref}
       id="about"
-      className="px-5 py-24 sm:py-32"
+      className={`${sectionShellClass} !pb-8 sm:!pb-12`}
       aria-labelledby="about-heading"
     >
       <div className="mx-auto max-w-5xl">
-        {/* ── Section header row ── */}
-        <div
-          className={`mb-8 flex items-center justify-between ${base} ${visible ? shown : hidden}`}
+        <SectionHeader
+          label="About"
+          txCode={transmissionCodes.about}
+          animateClass={`${base} ${visible ? shown : hidden}`}
           style={{ transitionDelay: '0ms' }}
-        >
-          <p className="font-display text-[11px] font-bold tracking-[0.3em] text-signal uppercase">
-            About
-          </p>
-          <span
-            className="font-mono text-[9px] tracking-widest text-ink/20 tabular-nums"
-            aria-hidden
-          >
-            TX.02
-          </span>
-        </div>
-
-        <div
-          className={`mb-12 h-px w-12 bg-signal ${base} ${visible ? shown : hidden}`}
-          style={{ transitionDelay: '60ms' }}
-          aria-hidden
         />
 
         {/* ── Main editorial grid ── */}
@@ -217,7 +205,7 @@ export function AboutSection() {
 
         {/* ── Closing statement — broadcast pull-quote ── */}
         <blockquote
-          className={`mt-12 border-t border-ink/10 pt-10 ${base} ${visible ? shown : hidden}`}
+          className={`mt-8 border-t border-ink/10 pt-8 sm:mt-10 sm:pt-10 ${base} ${visible ? shown : hidden}`}
           style={{ transitionDelay: '400ms' }}
         >
           <p className="border-l-2 border-signal pl-6 font-display text-3xl font-black leading-tight tracking-tight text-ink sm:text-4xl md:text-5xl">

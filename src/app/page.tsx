@@ -23,8 +23,6 @@ export default function Home() {
           </>
         ) : null}
 
-        <div className="h-px w-full bg-ink/10" aria-hidden />
-
         <SubmissionsSection />
       </main>
 

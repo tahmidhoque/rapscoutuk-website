@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react'
 
+import { SectionHeader, sectionShellFollowClass } from '@/components/SectionHeader'
+import { transmissionCodes } from '@/config/transmission'
 import { SOCIAL_LINKS } from '@/config/links'
 
 const INSTAGRAM_HANDLE = `@${new URL(SOCIAL_LINKS.instagram).pathname.replace(/^\//, '').replace(/\/$/, '')}`
@@ -49,19 +51,17 @@ export function SubmissionsSection() {
   return (
     <section
       ref={ref}
-      className="px-5 py-24 sm:py-32"
+      className={sectionShellFollowClass}
       aria-label="Music submissions"
     >
       <div className="mx-auto max-w-2xl">
-        {/* Section label */}
-        <p
-          className={`mb-6 font-display text-[11px] font-bold tracking-[0.3em] text-signal uppercase ${base} ${visible ? shown : hidden}`}
+        <SectionHeader
+          label="Submissions"
+          txCode={transmissionCodes.submissions}
+          animateClass={`${base} ${visible ? shown : hidden}`}
           style={{ transitionDelay: '0ms' }}
-        >
-          Submissions
-        </p>
+        />
 
-        {/* Heading */}
         <h2
           className={`mb-8 font-display text-4xl font-black leading-none tracking-tight text-ink sm:text-5xl md:text-6xl ${base} ${visible ? shown : hidden}`}
           style={{ transitionDelay: '80ms' }}
@@ -70,13 +70,6 @@ export function SubmissionsSection() {
           <br />
           music.
         </h2>
-
-        {/* Divider */}
-        <div
-          className={`mb-8 h-px w-12 bg-signal ${base} ${visible ? shown : hidden}`}
-          style={{ transitionDelay: '140ms' }}
-          aria-hidden
-        />
 
         {/* Intro copy */}
         <div

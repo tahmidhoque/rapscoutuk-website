@@ -3,6 +3,8 @@
 import * as React from 'react'
 import { useEffect, useRef, useState } from 'react'
 
+import { SectionHeader, sectionShellClass } from '@/components/SectionHeader'
+import { transmissionCodes } from '@/config/transmission'
 import { Input } from '@/components/ui/input'
 import { isValidEmail } from '@/lib/emailValidation'
 import { cn } from '@/lib/utils'
@@ -83,22 +85,20 @@ export function RapScoutNewsletterHub() {
   }
 
   return (
-    <section
-      ref={ref}
-      className="px-5 py-24 sm:py-32"
-      aria-label="RapScout mailing list"
-    >
+    <section ref={ref} className={sectionShellClass} aria-label="RapScout mailing list">
       <div
         className={`mx-auto flex w-full max-w-md flex-col items-center gap-8 text-center transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
           visible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
         }`}
       >
-        {/* Section label */}
-        <p className="font-display text-[11px] font-bold tracking-[0.3em] text-signal uppercase">
-          Newsletter
-        </p>
+        <SectionHeader
+          label="Newsletter"
+          txCode={transmissionCodes.newsletter}
+          align="center"
+          className="w-full"
+        />
 
-        <h2 className="font-display text-3xl font-black leading-tight tracking-tight text-ink sm:text-4xl">
+        <h2 className="mb-8 font-display text-3xl font-black leading-tight tracking-tight text-ink sm:text-4xl">
           Stay ahead
           <br />
           of the scene.
