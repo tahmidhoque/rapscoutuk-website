@@ -3,7 +3,9 @@ import Image from 'next/image'
 import { HeroVideoBackground } from '@/components/HeroVideoBackground'
 import { HeroMobileDock } from '@/components/hero/HeroMobileDock'
 import { HeroViewfinder } from '@/components/hero/HeroViewfinder'
+import { NewsletterCta } from '@/components/newsletter/NewsletterCta'
 import { SocialStrip } from '@/components/SocialStrip'
+import { siteFeatures } from '@/config/siteFeatures'
 import { SOCIAL_STRIP_VARIANT } from '@/config/socialStripVariant'
 
 /**
@@ -73,11 +75,14 @@ export function HeroSection() {
         </div>
 
         <div className="hero-slate pointer-events-none relative z-20 animate-fade-up animate-delay-1">
-          <div className="flex items-center justify-between gap-4 py-3 pl-24 pr-10">
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 py-3 pl-24 pr-10">
             <p className="font-display text-[11px] font-bold tracking-[0.22em] text-ink/65 uppercase">
               Scouting the next wave of UK&nbsp;rap
             </p>
-            <div className="pointer-events-auto shrink-0">
+            <div className="pointer-events-auto flex flex-wrap items-center justify-end gap-3 sm:gap-4">
+              {siteFeatures.newsletter ? (
+                <NewsletterCta variant="hero-pill" />
+              ) : null}
               <SocialStrip variant={SOCIAL_STRIP_VARIANT} />
             </div>
           </div>

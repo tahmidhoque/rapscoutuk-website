@@ -20,6 +20,13 @@
     color-scheme: dark;
     background-color: var(--color-canvas);
     color: var(--color-ink);
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
   }
 
   body {
@@ -70,6 +77,9 @@
 }
 .animate-delay-3 {
   animation-delay: 0.24s;
+}
+.animate-delay-4 {
+  animation-delay: 0.32s;
 }
 
 @keyframes scroll-line {

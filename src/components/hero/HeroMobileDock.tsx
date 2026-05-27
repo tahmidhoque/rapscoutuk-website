@@ -1,6 +1,8 @@
 import Image from 'next/image'
 
+import { NewsletterCta } from '@/components/newsletter/NewsletterCta'
 import { SocialStrip } from '@/components/SocialStrip'
+import { siteFeatures } from '@/config/siteFeatures'
 import { SOCIAL_STRIP_VARIANT } from '@/config/socialStripVariant'
 
 /**
@@ -28,11 +30,22 @@ export function HeroMobileDock() {
           Scouting the next wave of UK&nbsp;rap
         </p>
 
-        <div className="pointer-events-auto animate-fade-up animate-delay-2 flex justify-center">
+        {siteFeatures.newsletter ? (
+          <div className="pointer-events-auto animate-fade-up animate-delay-2 flex justify-center">
+            <NewsletterCta variant="hero-link" />
+          </div>
+        ) : null}
+
+        <div
+          className={`pointer-events-auto flex justify-center ${siteFeatures.newsletter ? 'animate-fade-up animate-delay-3' : 'animate-fade-up animate-delay-2'}`}
+        >
           <SocialStrip variant={SOCIAL_STRIP_VARIANT} />
         </div>
 
-        <div className="animate-fade-up animate-delay-3 pt-1" aria-hidden>
+        <div
+          className={`pt-1 ${siteFeatures.newsletter ? 'animate-fade-up animate-delay-4' : 'animate-fade-up animate-delay-3'}`}
+          aria-hidden
+        >
           <MobileScrollCue />
         </div>
       </div>

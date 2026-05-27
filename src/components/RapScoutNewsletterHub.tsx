@@ -5,26 +5,13 @@ import { useEffect, useRef, useState } from 'react'
 
 import { SectionHeader, sectionShellFollowClass } from '@/components/SectionHeader'
 import { transmissionCodes } from '@/config/transmission'
+import { newsletterCopy } from '@/config/newsletterCopy'
 import { Input } from '@/components/ui/input'
 import { isValidEmail } from '@/lib/emailValidation'
 import { cn } from '@/lib/utils'
 
-const perks = [
-  {
-    label: 'Early signals',
-    detail: 'Artists and scenes we’re watching before they break wider.',
-  },
-  {
-    label: 'Curated drops',
-    detail: 'Occasional dispatches — no spam, no filler.',
-  },
-] as const
-
 /**
  * Newsletter — broadcast signup, visually continuous with About.
- *
- * Sits immediately after the About pull-quote (no full-width divider) so
- * “discovery” narrative flows straight into staying on the list.
  */
 export function RapScoutNewsletterHub() {
   const [email, setEmail] = useState('')
@@ -110,7 +97,7 @@ export function RapScoutNewsletterHub() {
     <section
       ref={ref}
       id="newsletter"
-      className={`${sectionShellFollowClass} !pt-0 !pb-6 sm:!pb-8`}
+      className={`${sectionShellFollowClass} scroll-mt-20 !pt-0 !pb-6 sm:!pb-8`}
       aria-labelledby="newsletter-heading"
     >
       <div className="mx-auto max-w-5xl border-t border-ink/10 pt-10 sm:pt-14">
@@ -121,72 +108,37 @@ export function RapScoutNewsletterHub() {
           style={{ transitionDelay: '0ms' }}
         />
 
-        <div className="grid gap-0 lg:grid-cols-[2fr_3fr] lg:gap-20">
-          {/* Left — display heading + value props */}
+        <div className="grid gap-8 lg:grid-cols-[1fr_1.1fr] lg:gap-16 lg:items-start">
           <div>
             <h2
               id="newsletter-heading"
               className={`font-display text-4xl font-black leading-[0.95] tracking-tight text-ink sm:text-5xl lg:text-6xl ${base} ${visible ? shown : hidden}`}
               style={{ transitionDelay: '80ms' }}
             >
-              Stay on
-              <br />
-              the signal.
+              {newsletterCopy.heading}
             </h2>
 
             <p
-              className={`mt-6 max-w-sm text-base leading-relaxed text-dim sm:text-lg ${base} ${visible ? shown : hidden}`}
+              className={`mt-6 max-w-md text-base leading-relaxed text-dim sm:text-lg ${base} ${visible ? shown : hidden}`}
               style={{ transitionDelay: '140ms' }}
             >
-              Join the list for what we&apos;re scouting — artists, scenes, and
-              moments worth your attention.
+              {newsletterCopy.intro}
             </p>
-
-            <ul
-              className={`mt-8 space-y-0 ${base} ${visible ? shown : hidden}`}
-              style={{ transitionDelay: '200ms' }}
-              aria-label="What you receive"
-            >
-              {perks.map(({ label, detail }, i) => (
-                <li
-                  key={label}
-                  className="flex gap-5 border-t border-ink/10 py-5 last:border-b-0 lg:last:border-b"
-                >
-                  <span
-                    className="mt-0.5 font-display text-xs font-bold tabular-nums text-signal"
-                    aria-hidden
-                  >
-                    0{i + 1}
-                  </span>
-                  <div>
-                    <p className="font-display text-sm font-bold text-ink">
-                      {label}
-                    </p>
-                    <p className="mt-1 text-sm leading-relaxed text-dim">
-                      {detail}
-                    </p>
-                  </div>
-                </li>
-              ))}
-            </ul>
           </div>
 
-          {/* Right — signup panel */}
           <div
-            className={`border-t border-ink/10 pt-6 lg:border-t-0 lg:border-l lg:border-ink/10 lg:pl-12 lg:pt-2 ${base} ${visible ? shown : hidden}`}
-            style={{ transitionDelay: '260ms' }}
+            className={`${base} ${visible ? shown : hidden}`}
+            style={{ transitionDelay: '200ms' }}
           >
             {status !== 'success' ? (
               <form
                 onSubmit={handleSubmit}
-                className="space-y-5"
+                className="space-y-5 border-t border-ink/10 pt-6 lg:border-t-0 lg:pt-0"
                 aria-busy={status === 'loading'}
+                aria-label={newsletterCopy.submit}
               >
                 <div>
-                  <label
-                    htmlFor="hub-email"
-                    className="mb-3 block font-display text-[11px] font-bold tracking-[0.22em] text-ink/50 uppercase"
-                  >
+                  <label htmlFor="hub-email" className="sr-only">
                     Email address
                   </label>
                   <Input
@@ -216,8 +168,8 @@ export function RapScoutNewsletterHub() {
                       Enter a valid email address.
                     </p>
                   ) : (
-                    <p id="hub-email-hint" className="mt-2 text-xs text-dim">
-                      One field. No noise.
+                    <p id="hub-email-hint" className="sr-only">
+                      Enter your email to join the list
                     </p>
                   )}
                 </div>
@@ -230,7 +182,9 @@ export function RapScoutNewsletterHub() {
                     'disabled:pointer-events-none disabled:opacity-40',
                   )}
                 >
-                  {status === 'loading' ? 'Joining…' : 'Join the list'}
+                  {status === 'loading'
+                    ? newsletterCopy.submitting
+                    : newsletterCopy.submit}
                 </button>
 
                 {status === 'error' ? (
@@ -247,11 +201,10 @@ export function RapScoutNewsletterHub() {
             ) : (
               <div className="space-y-6 border-l-2 border-signal pl-6">
                 <p className="font-display text-2xl font-black leading-tight tracking-tight text-ink sm:text-3xl">
-                  You&apos;re on the list.
+                  {newsletterCopy.successTitle}
                 </p>
                 <p className="text-sm leading-relaxed text-dim">
-                  Watch your inbox — we&apos;ll be in touch when the next
-                  transmission goes out.
+                  {newsletterCopy.successBody}
                 </p>
                 <button
                   type="button"
