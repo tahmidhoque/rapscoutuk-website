@@ -19,7 +19,7 @@ const ibmPlexSans = IBM_Plex_Sans({
   display: 'swap',
 })
 
-const SITE_URL = 'https://www.rapscout.co.uk'
+const SITE_URL = 'https://www.rapscout.com'
 const OG_IMAGE = `${SITE_URL}/rapscout-logo.png`
 
 export const metadata: Metadata = {

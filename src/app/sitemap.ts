@@ -3,7 +3,7 @@ import type { MetadataRoute } from 'next'
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
-      url: 'https://www.rapscout.co.uk',
+      url: 'https://www.rapscout.com',
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 1,
