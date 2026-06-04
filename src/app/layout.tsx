@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 import { Chivo, IBM_Plex_Sans } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/next'
 
 import './globals.css'
 
@@ -126,6 +127,7 @@ export default function RootLayout({
       </head>
       <body>
         {children}
+        <Analytics />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
